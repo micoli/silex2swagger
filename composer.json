@@ -1,0 +1,48 @@
+{
+    "name": "radebatz/silex2swagger",
+    "description": "Generate swagger documentation from Silex Annotations",
+    "license": [
+        "MIT"
+    ],
+    "homepage": "http://radebatz.net/mano/",
+    "authors": [
+        {
+            "name": "Martin Rademacher",
+            "email": "mano@radebatz.org"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/DerManoMann/silex2swagger/issues",
+        "source": "https://github.com/DerManoMann/silex2swagger.git"
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "ddesrosiers/silex-annotation-provider": "~1.1",
+        "zircote/swagger-php": "dev-master",
+        "psr/log": "^1.0"
+    },
+    "require-dev": {
+        "symfony/console": "~2.7|3.0.0",
+        "phpunit/phpunit": "~5.0",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Radebatz\\Silex\\Swagger\\": "src/Silex/Swagger",
+            "Radebatz\\Console\\Command\\": "src/Console/Command"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Radebatz\\Silex\\Swagger\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}

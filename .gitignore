@@ -1,0 +1,5 @@
+/vendor
+/composer.lock
+/bin/swagger
+/bin/coveralls
+/bin/phpunit
