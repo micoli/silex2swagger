@@ -25,23 +25,32 @@ use Radebatz\Silex\Swagger\Annotations\CustomAnnotation;
 
 /**
  * Silex 2 Swagger converter.
+ *
+ * Supported options:
+ * - requestFilter: Callable to filter request annotations.
+ * - autoResponse:  Boolean flag to enable/disable generation of default response annotations.
  */
 class Silex2SwaggerConverter
 {
     protected $app;
-    protected $requestFilter;
+    protected $options;
     protected $logger;
     protected $processed;
     protected $classAnnotations;
 
     /**
-     * @param Silex\Application $app           Silex application instance required for processing annotations.
-     * @param callable|null     $requestFilter Optional filter to only process request annotations matching.
+     * @param Silex\Application $app      Silex application instance required for processing annotations.
+     * @param array             $options  Additional options.
      */
-    public function __construct($app, $requestFilter = null, LoggerInterface $logger = null)
+    public function __construct($app, array $options = [], LoggerInterface $logger = null)
     {
         $this->app = $app;
-        $this->requestFilter = $requestFilter;
+        $this->options = array_merge([
+            'requestFilter' => null,
+            'autoResponse' => false,
+            ],
+            $options
+        );
         $this->logger = $logger;
 
         $this->processed = new SplObjectStorage();
@@ -144,7 +153,7 @@ class Silex2SwaggerConverter
     {
         $migrated = [];
 
-        if (is_callable($this->requestFilter) && !call_user_func($this->requestFilter, $request)) {
+        if (is_callable($this->options['requestFilter']) && !call_user_func($this->options['requestFilter'], $request)) {
             return $migrated;
         }
 
@@ -228,7 +237,7 @@ class Silex2SwaggerConverter
                 }
             }
 
-            if (!$swgOperation->responses) {
+            if (!$swgOperation->responses && $this->options['autoResponse']) {
                 // add default response to make swagger happier :/
                 $swgOperation->responses = [new Response([
                     'response' => 'default',

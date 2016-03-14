@@ -12,6 +12,7 @@
 namespace Radebatz\Console\Command;
 
 use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Silex\Application;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +23,9 @@ use Swagger\Logger;
 use Radebatz\Silex\Swagger\Silex2SwaggerAnalysis;
 use Radebatz\Silex\Swagger\Silex2SwaggerConverter;
 
+/**
+ * Simple Psr logger wrapper around the Swagger logger.
+ */
 class PsrLogger extends AbstractLogger {
     protected $logger;
 
@@ -61,6 +65,7 @@ class Silex2SwaggerCommand extends Command
         ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Output file; if empty stdout will be used', null)
         ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Source path', './src')
         ->addOption('namespace', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Additional annotation namespaces to process', [])
+        ->addOption('auto-response', null, InputOption::VALUE_NONE, 'Create default response if none set')
         ->setHelp(<<<EOT
 Build swagger.json.
 EOT
@@ -75,6 +80,7 @@ EOT
     {
         $file = $input->getOption('file');
         $path = $input->getOption('path');
+        $autoResponse = $input->getOption('auto-response');
         $namespaces = $input->getOption('namespace');
 
         $verbose = $input->getOption('verbose');
@@ -93,12 +99,28 @@ EOT
 
         $logger = !$verbose ? null : new PsrLogger(Logger::getInstance());
 
-        $swagger = \Swagger\scan($path, ['analysis' => new Silex2SwaggerAnalysis([], null, new Silex2SwaggerConverter(new Application(), null, $logger), $namespaces)]);
+        $swagger = \Swagger\scan($path, ['analysis' => new Silex2SwaggerAnalysis([], null, $this->getConverter($logger, ['autoResponse' => $autoResponse]), $namespaces)]);
 
         if ($file) {
             file_put_contents($file, json_encode($swagger, JSON_PRETTY_PRINT));
         } else {
             $output->writeln(json_encode($swagger, JSON_PRETTY_PRINT));
         }
+    }
+
+    /**
+     * Get the application instance passed into the converter.
+     */
+    protected function getSilexApp()
+    {
+        return new Application();
+    }
+
+    /**
+     * Get the converter.
+     */
+    protected function getConverter(LoggerInterface $logger = null, array $options = [])
+    {
+        return new Silex2SwaggerConverter($this->getSilexApp(), $options, $logger);
     }
 }
