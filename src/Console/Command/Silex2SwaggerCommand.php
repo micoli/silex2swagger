@@ -99,7 +99,13 @@ EOT
 
         $logger = !$verbose ? null : new PsrLogger(Logger::getInstance());
 
-        $swagger = \Swagger\scan($path, ['analysis' => new Silex2SwaggerAnalysis([], null, $this->getConverter($logger, ['autoResponse' => $autoResponse]), $namespaces)]);
+        $swagger = \Swagger\scan(
+            $path,
+            array_merge(
+                ['analysis' => new Silex2SwaggerAnalysis([], null, $this->getConverter($logger, ['autoResponse' => $autoResponse]), $namespaces)],
+                $this->scanOptions()
+            )
+        );
 
         if ($file) {
             file_put_contents($file, json_encode($swagger, JSON_PRETTY_PRINT));
@@ -117,10 +123,29 @@ EOT
     }
 
     /**
+     * Get additional scan options.
+     *
+     * @return array
+     */
+    protected function scanOptions() {
+        return [];
+    }
+
+    /**
+     * Get additional converter options.
+     *
+     * @return array
+     */
+    protected function converterOptions()
+    {
+        return [];
+    }
+
+    /**
      * Get the converter.
      */
     protected function getConverter(LoggerInterface $logger = null, array $options = [])
     {
-        return new Silex2SwaggerConverter($this->getSilexApp(), $options, $logger);
+        return new Silex2SwaggerConverter($this->getSilexApp(), array_merge($options, $this->converterOptions()), $logger);
     }
 }
