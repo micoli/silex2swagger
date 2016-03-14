@@ -2,9 +2,9 @@ Bridge to generate swagger documentation from Silex Annotations
 ===============================================================
 
 ## Introduction
-[Silex Annotations][https://github.com/danadesrosiers/silex-annotation-provider] are an easy way to configure
+[Silex Annotations](https://github.com/danadesrosiers/silex-annotation-provider) are an easy way to configure
 routes in Silex.
-With this bridge, in combination with [Swagger-PHP][https://github.com/zircote/swagger-php], it is easy to generate basic swagger documentation from these annotations.
+With this bridge, in combination with [Swagger-PHP](https://github.com/zircote/swagger-php), it is easy to generate basic swagger documentation from these annotations.
 
 Typically the Swagger annotations are added on top of existing Silex annotations to complement/complete the definitions.
 
