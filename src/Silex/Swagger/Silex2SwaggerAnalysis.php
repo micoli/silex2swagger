@@ -36,7 +36,8 @@ class Silex2SwaggerAnalysis extends Analysis
             Analyser::$whitelist[] = $namespace;
         }
 
-        $this->customAnnotationsProcessor = new CustomAnnotations($silex2SwaggerConverter);
+        $processors =& self::processors();
+        array_unshift($processors, new CustomAnnotations($silex2SwaggerConverter));
     }
 
     /**
@@ -49,19 +50,5 @@ class Silex2SwaggerAnalysis extends Analysis
         }
 
         return parent::addAnnotation($annotation, $context);
-    }
-
-    public function process($processors = null)
-    {
-        if ($processors === null) { // Use the default and registered processors.
-            $processors = self::processors();
-        }
-        if (is_array($processors) === false && is_callable($processors)) {
-            $processors = [$processors];
-        }
-        // prepend our custom annotation converter
-        array_unshift($processors, $this->customAnnotationsProcessor);
-
-        parent::process($processors);
     }
 }
