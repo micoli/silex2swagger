@@ -67,12 +67,6 @@ echo $swagger
 For a more complete example have a look at the included Symfony Console command.
 
 
-## Command line
-````
-./bin/silex2swagger silex2swagger:build --path=src --file=swagger.json
-````
-
-
 ## Gotchas
 * All annotation classes need to be in the class path (visible by the auto loader).
 * In order to accurately merge/group annotations it is necessary to use the `@SLX\Route`
