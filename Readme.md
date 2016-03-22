@@ -86,3 +86,6 @@ For a more complete example have a look at the included Symfony Console command.
 
 ### v1.0.0
 * Initial version
+
+### v1.0.1
+* Make command more customizable
