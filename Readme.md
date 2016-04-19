@@ -93,3 +93,6 @@ For a more complete example have a look at the included Symfony Console command.
 ### v1.0.2
 * Add support for Bind annotation (set as operationId)
 * Allow to auto generate description and/or summary if not present
+
+### v1.0.3
+* Support callback to collect additional (custom) data to be added (ie: tags, etc.)

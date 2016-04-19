@@ -46,10 +46,11 @@ class Silex2SwaggerConverter
     {
         $this->app = $app;
         $this->options = array_merge([
-            'requestFilter' => null,
-            'autoResponse' => false,
-            'autoDescription' => false,
-            'autoSummary' => true,
+                'requestFilter' => null,
+                'autoResponse' => false,
+                'autoDescription' => false,
+                'autoSummary' => true,
+                'extraCallback' => function($context, $method, $path) { return []; },
             ],
             $options
         );
@@ -198,17 +199,21 @@ class Silex2SwaggerConverter
 
         foreach (explode('|', $methods) as $method) {
             $method = trim($method);
+            // for now we need this...
+            $path = '/'.$request->uri;
+
             $swgClass = 'Swagger\\Annotations\\'.ucfirst($method);
             /** @var SWG\Operation $swgOperation */
             $swgOperation = new $swgClass(array_merge([
                     '_context' => $context,
                     'operationId' => $extras['bind'] ?: $context->method,
+                    'method' => $method,
+                    'path' => $path,
                 ],
-                $extras['properties']
+                $extras['properties'],
+                call_user_func($this->options['extraCallback'], $context, $method, $path)
             ));
-            $swgOperation->method = $method;
-            // for now we need this...
-            $swgOperation->path = '/'.$request->uri;
+
             if ((!property_exists($swgOperation, 'description') || null === $swgOperation->description) && $this->options['autoDescription']) {
                 $swgOperation->description = sprintf('%s:%s', strtoupper($method), $swgOperation->path);
             }
