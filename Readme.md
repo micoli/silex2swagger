@@ -89,3 +89,7 @@ For a more complete example have a look at the included Symfony Console command.
 
 ### v1.0.1
 * Make command more customizable
+
+### v1.0.2
+* Add support for Bind annotation (set as operationId)
+* Allow to auto generate description and/or summary if not present

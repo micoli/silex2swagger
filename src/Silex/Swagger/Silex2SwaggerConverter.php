@@ -48,6 +48,8 @@ class Silex2SwaggerConverter
         $this->options = array_merge([
             'requestFilter' => null,
             'autoResponse' => false,
+            'autoDescription' => false,
+            'autoSummary' => true,
             ],
             $options
         );
@@ -198,13 +200,21 @@ class Silex2SwaggerConverter
             $method = trim($method);
             $swgClass = 'Swagger\\Annotations\\'.ucfirst($method);
             /** @var SWG\Operation $swgOperation */
-            $swgOperation = new $swgClass([
-                '_context' => $context,
-                'operationId' => $context->method,
-            ]);
+            $swgOperation = new $swgClass(array_merge([
+                    '_context' => $context,
+                    'operationId' => $extras['bind'] ?: $context->method,
+                ],
+                $extras['properties']
+            ));
             $swgOperation->method = $method;
             // for now we need this...
             $swgOperation->path = '/'.$request->uri;
+            if ((!property_exists($swgOperation, 'description') || null === $swgOperation->description) && $this->options['autoDescription']) {
+                $swgOperation->description = sprintf('%s:%s', strtoupper($method), $swgOperation->path);
+            }
+            if ((!property_exists($swgOperation, 'summary') || null === $swgOperation->summary) && $this->options['autoSummary']) {
+                $swgOperation->summary = $swgOperation->description ?: sprintf('%s:%s', strtoupper($method), $swgOperation->path);
+            }
 
             // add nested SWG anotations back where they are expected - using plural in cases..
             foreach ($swgAnnotations as $property => $value) {
@@ -294,6 +304,8 @@ class Silex2SwaggerConverter
         $extras = [
             'requirements' => [],
             'schemes' => [],
+            'bind' => null,
+            'properties' => [],
         ];
 
         // get all nested annotations and pick what we can use
@@ -309,6 +321,8 @@ class Silex2SwaggerConverter
                             $extras['schemes'][] = 'http';
                         } elseif ($annotation instanceof SLX\RequireHttps) {
                             $extras['schemes'][] = 'https';
+                        } elseif ($annotation instanceof SLX\Bind) {
+                            $extras['bind'] = $annotation->routeName;
                         }
                     }
                 }

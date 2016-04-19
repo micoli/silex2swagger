@@ -43,4 +43,15 @@ class SilexPrefixController
     {
         return '';
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="/bind"),
+     *   @SLX\Bind(routeName="bound")
+     * )
+     */
+    public function testBind()
+    {
+        return '';
+    }
 }

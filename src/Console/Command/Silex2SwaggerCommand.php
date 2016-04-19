@@ -62,10 +62,12 @@ class Silex2SwaggerCommand extends Command
         $this
         ->setName('silex2swagger:build')
         ->setDescription('Build swagger.json')
-        ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Output file; if empty stdout will be used', null)
-        ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Source path', './src')
-        ->addOption('namespace', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Additional annotation namespaces to process', [])
-        ->addOption('auto-response', null, InputOption::VALUE_NONE, 'Create default response if none set')
+        ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Output file; if empty stdout will be used.', null)
+        ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Source path.', './src')
+        ->addOption('namespace', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Additional annotation namespaces to process.', [])
+        ->addOption('auto-response', null, InputOption::VALUE_NONE, 'Create default response if none set.')
+        ->addOption('auto-description', null, InputOption::VALUE_NONE, 'Create default operation description based on method and path if none set.')
+        ->addOption('auto-summary', null, InputOption::VALUE_NONE, 'Create default operation summary based on method and path if none set.')
         ->setHelp(<<<EOT
 Build swagger.json.
 EOT
@@ -80,8 +82,13 @@ EOT
     {
         $file = $input->getOption('file');
         $path = $input->getOption('path');
-        $autoResponse = $input->getOption('auto-response');
         $namespaces = $input->getOption('namespace');
+
+        $options = [
+            'autoResponse' => $input->getOption('auto-response'),
+            'autoDescription' => $input->getOption('auto-description'),
+            'autoSummary' => $input->getOption('auto-summary'),
+        ];
 
         $verbose = $input->getOption('verbose');
         Logger::getInstance()->log = function ($entry, $type) use ($verbose, $output) {
@@ -102,7 +109,7 @@ EOT
         $swagger = \Swagger\scan(
             $path,
             array_merge(
-                ['analysis' => new Silex2SwaggerAnalysis([], null, $this->getConverter($logger, ['autoResponse' => $autoResponse]), $namespaces)],
+                ['analysis' => new Silex2SwaggerAnalysis([], null, $this->getConverter($logger, $options), $namespaces)],
                 $this->scanOptions()
             )
         );
