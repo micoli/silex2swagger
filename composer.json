@@ -16,13 +16,13 @@
         "source": "https://github.com/DerManoMann/silex2swagger.git"
     },
     "require": {
-        "php": ">=5.5.0",
-        "ddesrosiers/silex-annotation-provider": "~1.1",
+        "php": ">=5.5.9",
+        "ddesrosiers/silex-annotation-provider": "dev-master",
         "zircote/swagger-php": "~2.0",
         "psr/log": "^1.0"
     },
     "require-dev": {
-        "symfony/console": "~2.7|3.0.0",
+        "symfony/console": "~2.8|3.0.0",
         "phpunit/phpunit": "~5.0",
         "satooshi/php-coveralls": "dev-master"
     },
@@ -42,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }
