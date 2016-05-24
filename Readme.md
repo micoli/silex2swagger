@@ -96,3 +96,7 @@ For a more complete example have a look at the included Symfony Console command.
 
 ### v1.0.3
 * Support callback to collect additional (custom) data to be added (ie: tags, etc.)
+
+### v2.0.0
+* Update dependencies for Silex 2
+
